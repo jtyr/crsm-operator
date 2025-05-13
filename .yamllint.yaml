@@ -1,0 +1,13 @@
+extends: default
+
+rules:
+  document-start: disable
+  line-length: disable
+  quoted-strings:
+    required: only-when-needed
+  indentation:
+    spaces: 2
+  truthy:
+    check-keys: false
+  comments:
+    min-spaces-from-content: 1

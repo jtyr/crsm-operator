@@ -1,0 +1,9 @@
+apiVersion: ksm.jtyr.io/v1
+kind: CustomResourceStateMetrics
+metadata:
+  labels:
+    app.kubernetes.io/name: crsm-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: customresourcestatemetrics-sample
+spec:
+  # TODO(user): Add fields here

@@ -1,0 +1,52 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pre-commit:
+    name: Pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: --from-ref origin/main --to-ref HEAD
+
+  e2e-test:
+    name: E2E test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Install the latest version of Kind
+        run: |
+          KIND_PATH="$HOME/.local/bin"
+          mkdir -p "$KIND_PATH"
+          curl -Lo "$KIND_PATH/kind" https://kind.sigs.k8s.io/dl/latest/kind-linux-amd64
+          chmod +x "$KIND_PATH/kind"
+
+      - name: Verify Kind installation
+        run: kind version
+
+      - name: Running E2E test
+        run: |
+          make test-e2e

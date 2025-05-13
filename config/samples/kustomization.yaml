@@ -1,0 +1,4 @@
+## Append samples of your project ##
+resources:
+- ksm_v1_customresourcestatemetrics.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

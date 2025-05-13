@@ -1,0 +1,21 @@
+apiVersion: ksm.jtyr.io/v1
+kind: CustomResourceStateMetrics
+metadata:
+  name: single-values
+spec:
+  configMap:
+    name: kube-state-metrics-customresourcestate-config
+  resources:
+    - groupVersionKind:
+        group: myteam.io
+        kind: Foo
+        version: v1
+      metrics:
+        - name: uptime
+          help: Foo uptime
+          each:
+            type: Gauge
+            gauge:
+              path:
+                - status
+                - uptime
