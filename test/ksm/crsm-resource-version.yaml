@@ -4,7 +4,7 @@ metadata:
   name: crsm-resource-version
 spec:
   configMap:
-    name: kube-state-metrics-customresourcestate-config
+    name: crsm-test
   resources:
     - groupVersionKind:
         group: ksm.jtyr.io
