@@ -33,7 +33,6 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
-	"sigs.k8s.io/controller-runtime/pkg/event"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
@@ -675,62 +674,17 @@ func (r *CustomResourceStateMetricsReconciler) joinLines(lines []string, start, 
 	return result
 }
 
-// labelPredicate defines custom predicate to reconcile only CRSMs with matching labels.
-func (r *CustomResourceStateMetricsReconciler) labelPredicate() predicate.Funcs {
-	return predicate.Funcs{
-		CreateFunc: func(e event.CreateEvent) bool {
-			return r.Selector.Matches(labels.Set(e.Object.GetLabels()))
-		},
-		UpdateFunc: func(e event.UpdateEvent) bool {
-			return r.Selector.Matches(labels.Set(e.ObjectNew.GetLabels()))
-		},
-		DeleteFunc: func(e event.DeleteEvent) bool {
-			return r.Selector.Matches(labels.Set(e.Object.GetLabels()))
-		},
-		GenericFunc: func(e event.GenericEvent) bool {
-			return r.Selector.Matches(labels.Set(e.Object.GetLabels()))
-		},
-	}
-}
-
-// namespaceLabelPredicate defines custom predicate to reconcile only CRSMs within Namespaces with matching labels.
-func (r *CustomResourceStateMetricsReconciler) namespaceLabelPredicate() predicate.Funcs {
-	return predicate.Funcs{
-		CreateFunc: func(e event.CreateEvent) bool {
-			return r.namespaceMatches(e.Object.GetNamespace())
-		},
-		UpdateFunc: func(e event.UpdateEvent) bool {
-			return r.namespaceMatches(e.ObjectNew.GetNamespace())
-		},
-		DeleteFunc: func(e event.DeleteEvent) bool {
-			return r.namespaceMatches(e.Object.GetNamespace())
-		},
-		GenericFunc: func(e event.GenericEvent) bool {
-			return r.namespaceMatches(e.Object.GetNamespace())
-		},
-	}
-}
-
-// namespaceMatches checks if the Namespace selector matches the Namespace labels.
-func (r *CustomResourceStateMetricsReconciler) namespaceMatches(namespace string) bool {
-	var ns corev1.Namespace
-
-	err := r.Get(context.Background(), types.NamespacedName{Name: namespace, Namespace: ""}, &ns)
-	if err != nil {
-		// Ignore missing Namespace
-		return false
-	}
-
-	return r.NamespaceSelector.Matches(labels.Set(ns.GetLabels()))
-}
-
 // SetupWithManager sets up the controller with the Manager.
 func (r *CustomResourceStateMetricsReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	combinedPredicate := predicate.And(
-		// Reconcile only if generation value changes
-		predicate.GenerationChangedPredicate{},
-		r.labelPredicate(),
-		r.namespaceLabelPredicate(),
+		// Reconcile only if generation value changed or labels changed
+		predicate.Or(
+			predicate.GenerationChangedPredicate{},
+			utils.LabelChangedPredicate(),
+		),
+		// Label selectors must always match in order to reconcile
+		utils.LabelPredicate(r.Selector),
+		utils.NamespaceLabelPredicate(r.Client, r.NamespaceSelector),
 	)
 
 	return ctrl.NewControllerManagedBy(mgr).
