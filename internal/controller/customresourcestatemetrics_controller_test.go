@@ -28,7 +28,6 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/record"
 
-	// "k8s.io/client-go/util/workqueue"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -89,7 +88,6 @@ var _ = Describe("CustomResourceStateMetrics Controller", func() {
 				Client:   k8sClient,
 				Scheme:   k8sClient.Scheme(),
 				Recorder: record.NewFakeRecorder(100),
-				// Queue:  workqueue.NewTypedRateLimitingQueue(workqueue.DefaultTypedControllerRateLimiter[types.NamespacedName]()),
 			}
 
 			_, err := controllerReconciler.Reconcile(ctx, reconcile.Request{
@@ -102,7 +100,8 @@ var _ = Describe("CustomResourceStateMetrics Controller", func() {
 				crsm := &ksmv1.CustomResourceStateMetrics{}
 				err := k8sClient.Get(ctx, typeNamespacedName, crsm)
 				g.Expect(err).NotTo(HaveOccurred())
-				g.Expect(crsm.Status.Conditions[0].Status).To(Equal(metav1.ConditionTrue), "Resource is not yet ready")
+				g.Expect(crsm.Status.Conditions[0].Status).To(Equal(metav1.ConditionTrue),
+					"Resource is not yet ready")
 			}
 			Eventually(verifyResourceIsReady).Should(Succeed())
 		})

@@ -23,10 +23,6 @@ import (
 	"os"
 	"path/filepath"
 
-	// "time"
-
-	// "golang.org/x/time/rate"
-
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
@@ -34,12 +30,10 @@ import (
 	"go.uber.org/zap/zapcore"
 	"k8s.io/apimachinery/pkg/runtime"
 
-	// "k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/labels"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 
-	// "k8s.io/client-go/util/workqueue"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/certwatcher"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
@@ -237,14 +231,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	/*
-		myLimiter := workqueue.NewTypedMaxOfRateLimiter(
-			// workqueue.NewTypedItemExponentialFailureRateLimiter[types.NamespacedName](5*time.Millisecond, 30*time.Minute),
-			// 10 qps, 100 bucket size.  This is only for retry speed and its only the overall factor (not per item)
-			&workqueue.TypedBucketRateLimiter[types.NamespacedName]{Limiter: rate.NewLimiter(rate.Limit(100), 1000)},
-		)
-	*/
-
 	// Parse label selectors
 	var crsmSelector, nsSelector labels.Selector
 
@@ -259,11 +245,8 @@ func main() {
 	}
 
 	if err = (&controller.CustomResourceStateMetricsReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-		// Queue: workqueue.NewRateLimitingQueue[types.NamespacedName](workqueue.DefaultControllerRateLimiter()),
-		// Queue: workqueue.NewTypedRateLimitingQueue(workqueue.DefaultTypedControllerRateLimiter[types.NamespacedName]()),
-		// Queue: workqueue.NewTypedRateLimitingQueue(myLimiter),
+		Client:            mgr.GetClient(),
+		Scheme:            mgr.GetScheme(),
 		Recorder:          mgr.GetEventRecorderFor("crsm-operator"),
 		Selector:          crsmSelector,
 		NamespaceSelector: nsSelector,
