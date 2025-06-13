@@ -711,6 +711,7 @@ func (r *CustomResourceStateMetricsReconciler) namespaceLabelPredicate() predica
 	}
 }
 
+// namespaceMatches checks if the Namespace selector matches the Namespace labels.
 func (r *CustomResourceStateMetricsReconciler) namespaceMatches(namespace string) bool {
 	var ns corev1.Namespace
 
