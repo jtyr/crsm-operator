@@ -1,4 +1,8 @@
 ## Append samples of your project ##
 resources:
-- ksm_v1_customresourcestatemetrics.yaml
+- kitchen-sink.yaml
+- non-map-arrays.yaml
+- single-values.yaml
+- some-metrics-with-different-labels.yaml
+- vertical-pod-autoscaler.yaml
 # +kubebuilder:scaffold:manifestskustomizesamples
