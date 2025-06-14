@@ -1,4 +1,4 @@
-# CRSM Operator testing
+# CRSM Operator hacking
 
 This folder contains files that can help to setup CRSM Operator and run manual
 tests on it.
@@ -17,7 +17,7 @@ All the following commands should be run from the root of the Git repository.
 Create K3D cluster:
 
 ```shell
-k3d cluster create --config test/ksm/k3d.yaml
+k3d cluster create --config hack/ksm/k3d.yaml
 ```
 
 Install CRSM CRD:
@@ -35,7 +35,7 @@ make run
 Create CRSM resource:
 
 ```shell
-kubectl apply -f test/ksm/crsm-resource-version.yaml
+kubectl apply -f hack/ksm/crsm-resource-version.yaml
 ```
 
 Check the generated `ConfigMap`:
@@ -47,7 +47,7 @@ kubectl get cm -o yaml crsm-test
 Install KSM:
 
 ```shell
-helmfile apply -f test/ksm/helmfile.yaml
+helmfile apply -f hack/ksm/helmfile.yaml
 ```
 
 Check that KSM exposes the custom metric:
@@ -59,7 +59,7 @@ kubectl run --rm -it --image curlimages/curl --restart=Never test -- curl kube-s
 Delete the K3D cluster:
 
 ```shell
-k3d cluster delete --config test/ksm/k3d.yaml
+k3d cluster delete --config kack/ksm/k3d.yaml
 ```
 
 ## Author

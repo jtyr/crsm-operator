@@ -262,7 +262,7 @@ var _ = Describe("Manager", Ordered, func() {
 			By("Applying the resource")
 			verifyResourceIsApplied := func(g Gomega) {
 				cmd := exec.Command("kubectl", "apply",
-					"-f", "test/ksm/crsm-resource-version.yaml", "-n", namespace)
+					"-f", "hack/ksm/crsm-resource-version.yaml", "-n", namespace)
 				output, err := utils.Run(cmd)
 				g.Expect(err).NotTo(HaveOccurred())
 				g.Expect(output).To(ContainSubstring("created"), "Test resource is not yet created")
@@ -283,7 +283,7 @@ var _ = Describe("Manager", Ordered, func() {
 			By("Deleting the test resource")
 			verifyResourceIsDeleted := func(g Gomega) {
 				cmd := exec.Command("kubectl", "delete",
-					"-f", "test/ksm/crsm-resource-version.yaml", "-n", namespace)
+					"-f", "hack/ksm/crsm-resource-version.yaml", "-n", namespace)
 				output, err := utils.Run(cmd)
 				g.Expect(err).NotTo(HaveOccurred())
 				g.Expect(output).To(ContainSubstring("deleted"), "Test resource is not yet deleted")
