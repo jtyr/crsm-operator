@@ -12,8 +12,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
 
-// LabelPredicate defines custom predicate to reconcile only resources with matching labels.
-func LabelPredicate(selector labels.Selector) predicate.Funcs {
+// LabelSelectorPredicate defines custom predicate to reconcile only resources with matching labels.
+func LabelSelectorPredicate(selector labels.Selector) predicate.Funcs {
 	return predicate.Funcs{
 		CreateFunc: func(e event.CreateEvent) bool {
 			return selector.Matches(labels.Set(e.Object.GetLabels()))
@@ -30,8 +30,8 @@ func LabelPredicate(selector labels.Selector) predicate.Funcs {
 	}
 }
 
-// LabelChangedPredicate defines custom predicate to reconcile only if resources labels changed.
-func LabelChangedPredicate() predicate.Funcs {
+// LabelsChangedPredicate defines custom predicate to reconcile only if resource labels changed.
+func LabelsChangedPredicate() predicate.Funcs {
 	return predicate.Funcs{
 		CreateFunc: func(e event.CreateEvent) bool {
 			return true
@@ -51,8 +51,30 @@ func LabelChangedPredicate() predicate.Funcs {
 	}
 }
 
-// NamespaceLabelPredicate defines custom predicate to reconcile only resources within Namespaces with matching labels.
-func NamespaceLabelPredicate(client client.Client, selector labels.Selector) predicate.Funcs {
+// FinalizersChangedPredicate defines custom predicate to reconcile only if resource finalizers changed.
+func FinalizersChangedPredicate() predicate.Funcs {
+	return predicate.Funcs{
+		CreateFunc: func(e event.CreateEvent) bool {
+			return true
+		},
+		UpdateFunc: func(e event.UpdateEvent) bool {
+			oldFinalizers := e.ObjectOld.GetFinalizers()
+			newFinalizers := e.ObjectNew.GetFinalizers()
+
+			return !reflect.DeepEqual(oldFinalizers, newFinalizers)
+		},
+		DeleteFunc: func(e event.DeleteEvent) bool {
+			return false
+		},
+		GenericFunc: func(e event.GenericEvent) bool {
+			return false
+		},
+	}
+}
+
+// NamespaceLabelSelectorPredicate defines custom predicate to reconcile only
+// resources within Namespaces with matching labels.
+func NamespaceLabelSelectorPredicate(client client.Client, selector labels.Selector) predicate.Funcs {
 	return predicate.Funcs{
 		CreateFunc: func(e event.CreateEvent) bool {
 			return namespaceMatches(client, selector, e.Object.GetNamespace())

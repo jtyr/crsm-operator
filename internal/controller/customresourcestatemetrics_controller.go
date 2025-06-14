@@ -677,14 +677,15 @@ func (r *CustomResourceStateMetricsReconciler) joinLines(lines []string, start, 
 // SetupWithManager sets up the controller with the Manager.
 func (r *CustomResourceStateMetricsReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	combinedPredicate := predicate.And(
-		// Reconcile only if generation value changed or labels changed
+		// Reconcile only if generation value changed, labels or the finalizers changed
 		predicate.Or(
 			predicate.GenerationChangedPredicate{},
-			utils.LabelChangedPredicate(),
+			utils.LabelsChangedPredicate(),
+			utils.FinalizersChangedPredicate(),
 		),
 		// Label selectors must always match in order to reconcile
-		utils.LabelPredicate(r.Selector),
-		utils.NamespaceLabelPredicate(r.Client, r.NamespaceSelector),
+		utils.LabelSelectorPredicate(r.Selector),
+		utils.NamespaceLabelSelectorPredicate(r.Client, r.NamespaceSelector),
 	)
 
 	return ctrl.NewControllerManagedBy(mgr).
