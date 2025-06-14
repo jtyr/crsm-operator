@@ -35,7 +35,7 @@ make run
 Create CRSM resource:
 
 ```shell
-kubectl apply -f hack/ksm/crsm-resource-version.yaml
+kubectl apply -f config/samples/crsm-resource-version.yaml
 ```
 
 Check the generated `ConfigMap`:
