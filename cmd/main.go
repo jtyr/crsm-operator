@@ -46,6 +46,7 @@ import (
 
 	ksmv1 "github.com/jtyr/crsm-operator/api/v1"
 	"github.com/jtyr/crsm-operator/internal/controller"
+	"github.com/jtyr/crsm-operator/internal/metrics"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -231,6 +232,9 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Create metrics recorder
+	metricsRecorder := metrics.NewPrometheusMetricsRecorder()
+
 	// Parse label selectors
 	var crsmSelector, nsSelector labels.Selector
 
@@ -248,6 +252,7 @@ func main() {
 		Client:            mgr.GetClient(),
 		Scheme:            mgr.GetScheme(),
 		Recorder:          mgr.GetEventRecorderFor("crsm-operator"),
+		MetricsRecorder:   metricsRecorder,
 		Selector:          crsmSelector,
 		NamespaceSelector: nsSelector,
 	}).SetupWithManager(mgr); err != nil {

@@ -37,6 +37,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	ksmv1 "github.com/jtyr/crsm-operator/api/v1"
+	"github.com/jtyr/crsm-operator/internal/metrics"
 	"github.com/jtyr/crsm-operator/internal/utils"
 )
 
@@ -59,11 +60,15 @@ const reasonRemoving = "Removing"
 // Logger definition with a prefix.
 var log = ctrl.Log.WithName("[crsm]")
 
+// Records resources created on the cluster.
+var resources = make(map[string]int)
+
 // CustomResourceStateMetricsReconciler reconciles a CustomResourceStateMetrics object
 type CustomResourceStateMetricsReconciler struct {
 	client.Client
 	Scheme            *runtime.Scheme
 	Recorder          record.EventRecorder
+	MetricsRecorder   metrics.MetricsRecorder
 	Selector          labels.Selector
 	NamespaceSelector labels.Selector
 }
@@ -142,6 +147,14 @@ func (r *CustomResourceStateMetricsReconciler) Reconcile(ctx context.Context, re
 			return ctrl.Result{}, fmt.Errorf(
 				"failed to delete resources from the ConfigMap for the CustomResourceStateMetrics instance %s: %w",
 				instanceNamespacedName, err)
+		}
+
+		// Deregister the resource
+		delete(resources, instanceNamespacedName)
+
+		// Decrement the metric counter
+		if r.MetricsRecorder != nil {
+			r.MetricsRecorder.DecCRSMTotal()
 		}
 
 		// Remove finalizer if it exists
@@ -224,6 +237,14 @@ func (r *CustomResourceStateMetricsReconciler) Reconcile(ctx context.Context, re
 				instanceNamespacedName, err)
 		}
 
+		// Register the resource
+		resources[instanceNamespacedName] = 1
+
+		// Increment the metric counter
+		if r.MetricsRecorder != nil {
+			r.MetricsRecorder.IncCRSMTotal()
+		}
+
 		// Add finalizer if it doesn't exist yet
 		if !controllerutil.ContainsFinalizer(instance, FinalizerName) {
 			log.V(1).Info("Adding finalizer", "instance", instanceNamespacedName)
@@ -273,6 +294,16 @@ func (r *CustomResourceStateMetricsReconciler) Reconcile(ctx context.Context, re
 			return ctrl.Result{}, fmt.Errorf(
 				"failed to update resources for CustomResourceStateMetrics instance %s: %w",
 				instanceNamespacedName, err)
+		}
+
+		// Register the resource if it wasn't registered yet
+		if _, ok := resources[instanceNamespacedName]; !ok {
+			resources[instanceNamespacedName] = 1
+
+			// Increment the metric counter
+			if r.MetricsRecorder != nil {
+				r.MetricsRecorder.IncCRSMTotal()
+			}
 		}
 	}
 
