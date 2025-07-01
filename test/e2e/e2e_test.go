@@ -262,7 +262,7 @@ var _ = Describe("Manager", Ordered, func() {
 			By("Applying the resource")
 			verifyResourceIsApplied := func(g Gomega) {
 				cmd := exec.Command("kubectl", "apply",
-					"-f", "config/samples/crsm-resource-version.yaml/crsm-resource-version.yaml", "-n", namespace)
+					"-f", "config/samples/crsm-resource-version.yaml", "-n", namespace)
 				output, err := utils.Run(cmd)
 				g.Expect(err).NotTo(HaveOccurred())
 				g.Expect(output).To(ContainSubstring("created"), "Test resource is not yet created")
