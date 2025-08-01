@@ -6,10 +6,10 @@ import (
 )
 
 type MetricsRecorder interface {
-	// IncRSMTotal increments the total number of CRSM resources available on the cluster.
+	// IncCRSMTotal increments the total number of CRSM resources available on the cluster.
 	IncCRSMTotal()
 
-	// DecRSMTotal decrements the total number of CRSM resources available on the cluster.
+	// DecCRSMTotal decrements the total number of CRSM resources available on the cluster.
 	DecCRSMTotal()
 }
 
