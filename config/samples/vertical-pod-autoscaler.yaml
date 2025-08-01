@@ -1,0 +1,38 @@
+apiVersion: ksm.jtyr.io/v1
+kind: CustomResourceStateMetrics
+metadata:
+  name: vertical-pod-autoscaler
+spec:
+  configMap:
+    name: kube-state-metrics-customresourcestate-config
+  resources:
+    - groupVersionKind:
+        group: autoscaling.k8s.io
+        kind: VerticalPodAutoscaler
+        version: v1
+      labelsFromPath:
+        verticalpodautoscaler:
+          - metadata
+          - name
+        namespace:
+          - metadata
+          - namespace
+        target_api_version:
+          - apiVersion
+        target_kind:
+          - spec
+          - targetRef
+          - kind
+        target_name:
+          - spec
+          - targetRef
+          - name
+      metrics:
+        - name: annotations
+          help: Kubernetes annotations converted to Prometheus labels.
+          each:
+            type: Gauge
+            gauge:
+              path:
+                - metadata
+                - annotations

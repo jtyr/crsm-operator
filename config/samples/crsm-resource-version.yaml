@@ -1,0 +1,22 @@
+apiVersion: ksm.jtyr.io/v1
+kind: CustomResourceStateMetrics
+metadata:
+  name: crsm-resource-version
+spec:
+  configMap:
+    name: crsm-test
+  resources:
+    - groupVersionKind:
+        group: ksm.jtyr.io
+        kind: CustomResourceStateMetrics
+        version: v1
+      metricNamePrefix: crsm
+      metrics:
+        - name: resource_version
+          help: Resource version of the CustomResourceStateMetrics resource.
+          each:
+            type: Gauge
+            gauge:
+              path:
+                - metadata
+                - resourceVersion

@@ -1,0 +1,72 @@
+version: "2"
+
+linters:
+  enable:
+    - bodyclose
+    - copyloopvar
+    - dogsled
+    - dupl
+    - errorlint
+    - gocheckcompilerdirectives
+    - goconst
+    - gocritic
+    - gocyclo
+    - godox
+    - goprintffuncname
+    - gosec
+    - lll
+    - misspell
+    - mnd
+    - nakedret
+    - noctx
+    - revive
+    - staticcheck
+    - testifylint
+    - unconvert
+    - unparam
+    - whitespace
+  disable:
+    # Gives false positives - disable until https://github.com/golangci/golangci-lint/issues/3228 is resolved.
+    - nolintlint
+  settings:
+    gosec:
+      config:
+        G306: "0644"
+    mnd:
+      ignored-numbers:
+        - "0644"
+    revive:
+      rules:
+        - name: dot-imports
+          arguments:
+            - allowed-packages:
+                - github.com/onsi/ginkgo/v2
+                - github.com/onsi/gomega
+    staticcheck:
+      dot-import-whitelist:
+        - github.com/onsi/ginkgo/v2
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - funlen
+        path: _test.go
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

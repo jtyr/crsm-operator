@@ -1,0 +1,55 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: manager-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+  - get
+  - list
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ksm.jtyr.io
+  resources:
+  - customresourcestatemetrics
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ksm.jtyr.io
+  resources:
+  - customresourcestatemetrics/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - ksm.jtyr.io
+  resources:
+  - customresourcestatemetrics/status
+  verbs:
+  - get
+  - patch
+  - update

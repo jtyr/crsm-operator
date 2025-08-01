@@ -1,0 +1,9 @@
+## Append samples of your project ##
+resources:
+- crsm-resource-version.yaml
+- kitchen-sink.yaml
+- non-map-arrays.yaml
+- single-values.yaml
+- some-metrics-with-different-labels.yaml
+- vertical-pod-autoscaler.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

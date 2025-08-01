@@ -1,0 +1,68 @@
+version: 2
+
+project_name: crsm-operator
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - ldflags:
+      - -s -w -X github.com/jtyr/{{ .ProjectName }}/internal/version.Version={{ .Version }}
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    main: ./cmd
+
+archives:
+  - formats:
+      - tar.gz
+    name_template: >-
+      {{ .ProjectName }}-
+      {{- .Os }}-
+      {{- if eq .Arch "amd64" -}}
+        x86_64
+      {{- else if eq .Arch "386" -}}
+        i386
+      {{- else }}
+        {{- .Arch }}
+      {{- end }}
+      {{- if .Arm -}}
+        v{{ .Arm }}
+      {{- end }}
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+dockers:
+  - dockerfile: &dockerfile Dockerfile.release
+    image_templates:
+      - &amd64ImageName ghcr.io/jtyr/crsm-operator/docker/{{ .ProjectName }}:{{ .Tag }}-amd64
+    use: buildx
+    build_flag_templates:
+      - --pull
+      - --platform=linux/amd64
+  - dockerfile: *dockerfile
+    image_templates:
+      - &arm64ImageName ghcr.io/jtyr/crsm-operator/docker/{{ .ProjectName }}:{{ .Tag }}-arm64
+    use: buildx
+    build_flag_templates:
+      - --pull
+      - --platform=linux/arm64
+    goarch: arm64
+
+docker_manifests:
+  - name_template: ghcr.io/jtyr/crsm-operator/docker/{{ .ProjectName }}:{{ .Tag }}
+    image_templates:
+      - *amd64ImageName
+      - *arm64ImageName
+  - name_template: ghcr.io/jtyr/crsm-operator/docker/{{ .ProjectName }}:latest
+    image_templates:
+      - *amd64ImageName
+      - *arm64ImageName

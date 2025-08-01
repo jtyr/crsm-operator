@@ -1,0 +1,17 @@
+customResourceState:
+  enabled: true
+  create: false
+  name: crsm-test
+
+extraArgs:
+  - --custom-resource-state-only
+
+rbac:
+  extraRules:
+    - apiGroups:
+        - ksm.jtyr.io
+      resources:
+        - customresourcestatemetrics
+      verbs:
+        - list
+        - watch

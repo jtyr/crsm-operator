@@ -1,0 +1,4 @@
+# Ignore line length
+MD013: false
+# Ignore duplicate headings
+MD024: false

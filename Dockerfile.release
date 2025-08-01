@@ -1,0 +1,5 @@
+FROM scratch
+
+COPY crsm-operator /bin/crsm-operator
+
+ENTRYPOINT ["/bin/crsm-operator"]

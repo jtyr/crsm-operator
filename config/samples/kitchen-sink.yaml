@@ -1,0 +1,52 @@
+apiVersion: ksm.jtyr.io/v1
+kind: CustomResourceStateMetrics
+metadata:
+  name: kitchen-sink
+spec:
+  configMap:
+    name: kube-state-metrics-customresourcestate-config
+  resources:
+    - groupVersionKind:
+        group: myteam.io
+        kind: Foo
+        version: v1
+      commonLabels:
+        crd_type: foo
+      labelsFromPath:
+        name:
+          - metadata
+          - name
+      metrics:
+        - name: ready_count
+          help: Number Foo Bars ready
+          each:
+            type: Gauge
+            gauge:
+              path:
+                - status
+                - sub
+              labelFromKey: type
+              labelsFromPath:
+                active:
+                  - active
+              valueFrom:
+                - ready
+          commonLabels:
+            custom_metric: "yes"
+          labelsFromPath:
+            "*":
+              - metadata
+              - labels
+            lorem_*:
+              - metadata
+              - annotations
+            "**":
+              - metadata
+              - annotations
+            name:
+              - metadata
+              - name
+            foo:
+              - metadata
+              - labels
+              - foo

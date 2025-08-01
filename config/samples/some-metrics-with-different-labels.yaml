@@ -1,0 +1,68 @@
+apiVersion: ksm.jtyr.io/v1
+kind: CustomResourceStateMetrics
+metadata:
+  name: some-metrics-with-different-labels
+spec:
+  configMap:
+    name: kube-state-metrics-customresourcestate-config
+  resources:
+    - groupVersionKind:
+        group: autoscaling.k8s.io
+        kind: VerticalPodAutoscaler
+        version: v1
+      labelsFromPath:
+        verticalpodautoscaler:
+          - metadata
+          - name
+        namespace:
+          - metadata
+          - namespace
+        target_api_version:
+          - apiVersion
+        target_kind:
+          - spec
+          - targetRef
+          - kind
+        target_name:
+          - spec
+          - targetRef
+          - name
+      metrics:
+        # for memory
+        - name: verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound
+          help: Minimum memory resources the container can use before the VerticalPodAutoscaler updater evicts it.
+          commonLabels:
+            unit: byte
+            resource: memory
+          each:
+            type: Gauge
+            gauge:
+              path:
+                - status
+                - recommendation
+                - containerRecommendations
+              labelsFromPath:
+                container:
+                  - containerName
+              valueFrom:
+                - lowerBound
+                - memory
+        # for CPU
+        - name: verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound
+          help: Minimum cpu resources the container can use before the VerticalPodAutoscaler updater evicts it.
+          commonLabels:
+            unit: core
+            resource: cpu
+          each:
+            type: Gauge
+            gauge:
+              path:
+                - status
+                - recommendation
+                - containerRecommendations
+              labelsFromPath:
+                container:
+                  - containerName
+              valueFrom:
+                - lowerBound
+                - cpu
