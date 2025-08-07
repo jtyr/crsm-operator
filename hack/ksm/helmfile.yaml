@@ -6,7 +6,7 @@ releases:
   - name: kube-state-metrics
     namespace: default
     chart: prometheus-community/kube-state-metrics
-    version: 5.37.0
+    version: 6.1.2
     wait: true
     values:
       - values/kube-state-metrics.yaml
