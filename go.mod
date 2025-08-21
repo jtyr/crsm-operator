@@ -10,7 +10,7 @@ replace k8s.io/kube-state-metrics/v2 => /Users/jiri.tyr/Documents/projects/kube-
 
 require (
 	github.com/go-logr/logr v1.4.3
-	github.com/onsi/ginkgo/v2 v2.24.0
+	github.com/onsi/ginkgo/v2 v2.25.0
 	github.com/onsi/gomega v1.38.0
 	github.com/prometheus/client_golang v1.23.0
 	go.uber.org/zap v1.27.0
