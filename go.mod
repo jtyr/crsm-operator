@@ -2,7 +2,7 @@ module github.com/jtyr/crsm-operator
 
 go 1.24.0
 
-toolchain go1.25.0
+toolchain go1.25.1
 
 godebug default=go1.23
 
