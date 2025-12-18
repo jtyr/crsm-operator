@@ -15,7 +15,7 @@ require (
 	github.com/prometheus/client_golang v1.23.2
 	go.uber.org/zap v1.27.1
 	gopkg.in/yaml.v3 v3.0.1
-	k8s.io/api v0.34.3
+	k8s.io/api v0.35.0
 	k8s.io/apimachinery v0.35.0
 	k8s.io/client-go v0.34.3
 	sigs.k8s.io/controller-runtime v0.22.4
