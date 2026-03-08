@@ -28,7 +28,7 @@ repos:
         exclude: config/
 
   - repo: https://github.com/golangci/golangci-lint
-    rev: v2.11.1
+    rev: v2.11.2
     hooks:
       - id: golangci-lint
 
